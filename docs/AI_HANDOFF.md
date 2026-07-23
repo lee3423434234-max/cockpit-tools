@@ -30,20 +30,19 @@ Implement a safe Windows/macOS Cockpit CLI MVP that synchronizes encrypted Codex
 - Fixed Windows process detection export, Rust error lifetimes, CLI `String` to `anyhow` conversion, and large enum layout warnings found during local compilation.
 - Verified 11 focused Drive-sync tests, `cargo check -p cockpit-cli`, CLI help, and read-only status against isolated nonexistent test paths.
 - Pushed implementation commits `068a84a`, `97142af`, and `8bbd5c0` to `fork/codex/google-drive-sync`.
+- GitHub Actions run `30035109511` passed on both `windows-latest` and `macos-latest` for code commit `8bbd5c0`.
 
 ## In-progress work
 
-- GitHub Actions run `30035109511` is validating commit `8bbd5c0` on `windows-latest` and `macos-latest`.
-- Real Google Drive session synchronization remains intentionally disabled until CI is green and the first-device upload-only rollout is explicitly started.
+- Implementation and cross-platform CI are complete. Real Google Drive session synchronization remains intentionally disabled until the first-device upload-only rollout is explicitly started.
 
 ## Next steps
 
-1. Wait for GitHub Actions run `30035109511` and fix any Windows/macOS failure before deployment.
-2. Create a pull request from `codex/google-drive-sync` to the fork's `main` only after CI is green and the user wants integration.
-3. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
-4. Review counts and paths, then run `--upload-only`; do not enable imports yet.
-5. Validate File Provider hydration and app-server discovery on a physical Mac before the first macOS import.
-6. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
+1. Create a pull request from `codex/google-drive-sync` to the fork's `main` only when the user wants integration.
+2. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
+3. Review counts and paths, then run `--upload-only`; do not enable imports yet.
+4. Validate File Provider hydration and app-server discovery on a physical Mac before the first macOS import.
+5. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
 
 ## Risks or blockers
 
