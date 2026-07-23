@@ -104,26 +104,12 @@ function main() {
   );
 
   const darwinAarch64Tar = findAsset(assets, /_aarch64\.app\.tar\.gz$/, 'darwin-aarch64');
-  const darwinX64Tar = findAsset(assets, /_x64\.app\.tar\.gz$/, 'darwin-x86_64');
   const windowsMsi = findAsset(assets, /_x64_en-US\.msi$/, 'windows-x86_64-msi');
   const windowsNsis = findAsset(assets, /_x64-setup\.exe$/, 'windows-x86_64-nsis');
-  const linuxX64AppImage = findAsset(assets, /_amd64\.AppImage$/, 'linux-x86_64-appimage');
-  const linuxArmAppImage = findAsset(assets, /_aarch64\.AppImage$/, 'linux-aarch64-appimage');
-  const linuxX64Deb = findAsset(assets, /_amd64\.deb$/, 'linux-x86_64-deb');
-  const linuxArmDeb = findAsset(assets, /_arm64\.deb$/, 'linux-aarch64-deb');
-  const linuxX64Rpm = findAsset(assets, /-1\.x86_64\.rpm$/, 'linux-x86_64-rpm');
-  const linuxArmRpm = findAsset(assets, /-1\.aarch64\.rpm$/, 'linux-aarch64-rpm');
 
   const darwinAarch64Entry = buildPlatformEntry(darwinAarch64Tar, signatures, repo, version);
-  const darwinX64Entry = buildPlatformEntry(darwinX64Tar, signatures, repo, version);
   const windowsMsiEntry = buildPlatformEntry(windowsMsi, signatures, repo, version);
   const windowsNsisEntry = buildPlatformEntry(windowsNsis, signatures, repo, version);
-  const linuxX64AppImageEntry = buildPlatformEntry(linuxX64AppImage, signatures, repo, version);
-  const linuxArmAppImageEntry = buildPlatformEntry(linuxArmAppImage, signatures, repo, version);
-  const linuxX64DebEntry = buildPlatformEntry(linuxX64Deb, signatures, repo, version);
-  const linuxArmDebEntry = buildPlatformEntry(linuxArmDeb, signatures, repo, version);
-  const linuxX64RpmEntry = buildPlatformEntry(linuxX64Rpm, signatures, repo, version);
-  const linuxArmRpmEntry = buildPlatformEntry(linuxArmRpm, signatures, repo, version);
 
   const latest = {
     version,
@@ -132,20 +118,10 @@ function main() {
     platforms: {
       'darwin-aarch64': darwinAarch64Entry,
       'darwin-aarch64-app': cloneEntry(darwinAarch64Entry),
-      'darwin-x86_64': darwinX64Entry,
-      'darwin-x86_64-app': cloneEntry(darwinX64Entry),
       // Unknown/generic Windows target prefers MSI (see #1320 / desktop_updater_target fallback).
       'windows-x86_64': windowsMsiEntry,
       'windows-x86_64-msi': cloneEntry(windowsMsiEntry),
       'windows-x86_64-nsis': windowsNsisEntry,
-      'linux-x86_64': linuxX64AppImageEntry,
-      'linux-x86_64-appimage': cloneEntry(linuxX64AppImageEntry),
-      'linux-x86_64-deb': linuxX64DebEntry,
-      'linux-x86_64-rpm': linuxX64RpmEntry,
-      'linux-aarch64': linuxArmAppImageEntry,
-      'linux-aarch64-appimage': cloneEntry(linuxArmAppImageEntry),
-      'linux-aarch64-deb': linuxArmDebEntry,
-      'linux-aarch64-rpm': linuxArmRpmEntry,
     },
   };
 

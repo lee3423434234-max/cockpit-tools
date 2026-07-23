@@ -2,7 +2,7 @@
 
 ## Current goal
 
-Implement a safe Windows/macOS Cockpit CLI MVP that synchronizes encrypted Codex rollout sessions through a Google Drive for desktop directory without synchronizing authentication, configuration, logs, or live databases.
+Implement a safe Cockpit CLI MVP that synchronizes encrypted Codex rollout sessions through a Google Drive for desktop directory, and ship the fork only for Windows x64 and macOS Apple Silicon (ARM64), without synchronizing authentication, configuration, logs, or live databases.
 
 ## Completed work
 
@@ -32,18 +32,25 @@ Implement a safe Windows/macOS Cockpit CLI MVP that synchronizes encrypted Codex
 - Pushed implementation commits `068a84a`, `97142af`, and `8bbd5c0` to `fork/codex/google-drive-sync`.
 - GitHub Actions run `30035109511` passed on both `windows-latest` and `macos-latest` for code commit `8bbd5c0`.
 - Opened fork pull request `#1` from `codex/google-drive-sync` into `main`: `https://github.com/lee3423434234-max/cockpit-tools/pull/1`.
+- Fixed the CodeQL hard-coded-salt false positive by generating the PBKDF2 salt and AES-GCM nonce directly with `OsRng`; commit `1477e4a` passed Rust/JavaScript CodeQL and code-scanning checks.
+- Confirmed all 14 pull-request checks passed for commit `1477e4a`, including Windows, macOS ARM64/x64/universal, Ubuntu, Drive-sync CI, and CodeQL.
+- Restricted the fork's pull-request Build Matrix and release artifacts to Windows x64 (`x86_64-pc-windows-msvc`) and macOS Apple Silicon (`aarch64-apple-darwin`).
+- Updated the updater manifest, Homebrew cask, manual release helper, and release documentation for the two supported architectures; macOS Intel/universal and Linux release jobs were removed.
+- Added a release-manifest regression test and locally passed 14 Node release tests, YAML parsing, 11 Drive-sync tests, 2 app-server path tests, and `cargo check -p cockpit-cli`.
 
 ## In-progress work
 
-- Implementation and cross-platform CI are complete. Pull request `#1` is open and unmerged. Real Google Drive session synchronization remains intentionally disabled until the first-device upload-only rollout is explicitly started.
+- Pull request `#1` remains open and unmerged. The two-architecture update is locally validated and must be pushed, then the reduced Windows x64/macOS ARM64 checks must pass before merge. Real Google Drive synchronization remains intentionally disabled.
 
 ## Next steps
 
-1. Review and merge pull request `#1` into the fork's `main` when integration is desired.
-2. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
-3. Review counts and paths, then run `--upload-only`; do not enable imports yet.
-4. Validate File Provider hydration and app-server discovery on a physical Mac before the first macOS import.
-5. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
+1. Push the Windows x64/macOS ARM64 update to `codex/google-drive-sync` and wait for the updated pull-request checks.
+2. Merge pull request `#1` into the fork's `main` only after all required checks pass.
+3. Mirror this handoff state into the project and Google Drive copies after merge.
+4. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
+5. Review counts and paths, then run `--upload-only`; do not enable imports yet.
+6. Validate File Provider hydration and app-server discovery on a physical Apple Silicon Mac before the first macOS import.
+7. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
 
 ## Risks or blockers
 
@@ -54,5 +61,6 @@ Implement a safe Windows/macOS Cockpit CLI MVP that synchronizes encrypted Codex
 - A metadata rebuild failure leaves local state marked pending and requires a later successful app-server run.
 - Automatic divergent branch merging is intentionally unsupported. A selected conflict object can overwrite only through the explicit resolve command after backup.
 - macOS behavior still requires hosted/physical Mac validation, especially File Provider hydration, permissions, app-server discovery, and atomic rename behavior.
+- The fork intentionally does not publish Windows ARM, macOS Intel/universal, or Linux artifacts. Upstream changes to shared release workflows can conflict with this fork-only architecture policy during automatic upstream merges.
 - Cockpit Tools is CC BY-NC-SA 4.0; commercial/internal business use requires separate authorization.
 - Workspace-wide Clippy with `-D warnings` is blocked by more than 180 pre-existing upstream warnings. The new Drive-sync files have no Clippy warnings; two remaining warnings in `cockpit-cli/src/main.rs` are pre-existing lines last changed by upstream commit `1e2b1a9`.

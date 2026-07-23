@@ -5,18 +5,18 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 
-const DEFAULT_REPO = 'jlcodes99/cockpit-tools';
+const DEFAULT_REPO = 'lee3423434234-max/cockpit-tools';
 const DEFAULT_CASK_PATH = 'Casks/cockpit-tools.rb';
-const DEFAULT_TARGET = 'universal-apple-darwin';
+const DEFAULT_TARGET = 'aarch64-apple-darwin';
 const DEFAULT_RELEASE_ASSET_PREFIX = 'Cockpit.Tools';
 
 function printHelp() {
   console.log('Usage: node scripts/release/publish_github_release_and_cask.cjs [options]');
   console.log('');
-  console.log('Build universal DMG, upload it to GitHub Release, and update Homebrew cask.');
+  console.log('Build an Apple Silicon DMG, upload it to GitHub Release, and update Homebrew cask.');
   console.log('');
   console.log('Options:');
-  console.log('  --skip-build            Skip Tauri universal build step');
+  console.log('  --skip-build            Skip Tauri Apple Silicon build step');
   console.log('  --skip-gh               Skip GitHub Release create/upload step');
   console.log('  --skip-cask             Skip cask file update step');
   console.log('  --dry-run               Print planned actions without writing/uploading');
@@ -24,9 +24,9 @@ function printHelp() {
   console.log('  --generate-notes        Use GitHub generated release notes when creating release');
   console.log('  --notes-file <path>     Pass release notes file to gh release create');
   console.log('  --tag <tag>             Override release tag (default: v<package.json.version>)');
-  console.log('  --repo <owner/repo>     GitHub repo for release (default: jlcodes99/cockpit-tools)');
+  console.log('  --repo <owner/repo>     GitHub repo for release (default: lee3423434234-max/cockpit-tools)');
   console.log('  --cask <path>           Homebrew cask file path (default: Casks/cockpit-tools.rb)');
-  console.log('  --asset-path <path>     Use an existing universal .dmg instead of default output path');
+  console.log('  --asset-path <path>     Use an existing aarch64 .dmg instead of default output path');
   console.log('  -h, --help              Show this help');
 }
 
@@ -166,13 +166,13 @@ function ensureFileExists(filePath, label) {
   }
 }
 
-function buildUniversalIfNeeded(version, options) {
+function buildAppleSiliconIfNeeded(version, options) {
   if (options.skipBuild) {
-    console.log('[skip] universal build');
+    console.log('[skip] Apple Silicon build');
     return;
   }
 
-  logSection('Build Universal DMG');
+  logSection('Build Apple Silicon DMG');
   runCommand(
     'npm',
     ['run', 'tauri', 'build', '--', '--target', DEFAULT_TARGET],
@@ -194,16 +194,16 @@ function resolveSourceDmgPath(version, options) {
     'release',
     'bundle',
     'dmg',
-    `Cockpit Tools_${version}_universal.dmg`
+    `Cockpit Tools_${version}_aarch64.dmg`
   );
 
-  ensureFileExists(defaultPath, 'Universal DMG');
+  ensureFileExists(defaultPath, 'Apple Silicon DMG');
   return defaultPath;
 }
 
 function stageReleaseAsset(sourcePath, version, options) {
   const releaseArtifactsDir = path.resolve('release-artifacts');
-  const stagedName = `${DEFAULT_RELEASE_ASSET_PREFIX}_${version}_universal.dmg`;
+  const stagedName = `${DEFAULT_RELEASE_ASSET_PREFIX}_${version}_aarch64.dmg`;
   const stagedPath = path.join(releaseArtifactsDir, stagedName);
 
   logSection('Stage Release Asset');
@@ -338,8 +338,8 @@ function updateCaskFile(version, digest, options) {
   if (!urlLineMatch) {
     throw new Error('Failed to find url in cask file');
   }
-  if (!urlLineMatch[1].includes('_universal.dmg')) {
-    throw new Error('Cask url does not point to a _universal.dmg asset');
+  if (!urlLineMatch[1].includes('_aarch64.dmg')) {
+    throw new Error('Cask url does not point to an _aarch64.dmg asset');
   }
 
   const versionLine = updated.match(/^\s*version\s+"([^"]+)"/m)?.[0] || '';
@@ -378,9 +378,9 @@ function main() {
   console.log(`repo: ${options.repo}`);
   console.log(`dry-run: ${options.dryRun ? 'yes' : 'no'}`);
 
-  buildUniversalIfNeeded(version, options);
+  buildAppleSiliconIfNeeded(version, options);
 
-  logSection('Resolve Universal DMG');
+  logSection('Resolve Apple Silicon DMG');
   const sourceDmgPath = resolveSourceDmgPath(version, options);
   console.log(`asset: ${sourceDmgPath}`);
 
