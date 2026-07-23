@@ -26,21 +26,24 @@ Implement a safe Windows/macOS Cockpit CLI MVP that synchronizes encrypted Codex
 - Added unit/integration tests for encryption/tamper rejection, canonical hashing, import idempotence, strict-prefix fast-forward, divergence, metadata mapping, partial files, running-process rejection, upload-only mode, explicit conflict resolution, and local-state isolation.
 - Added Windows/macOS GitHub Actions CI and `docs/CODEX_DRIVE_SYNC.md`.
 - Installed Rustup stable locally.
+- Installed the Visual C++ toolchain and Windows SDK required by the Rust MSVC target.
+- Fixed Windows process detection export, Rust error lifetimes, CLI `String` to `anyhow` conversion, and large enum layout warnings found during local compilation.
+- Verified 11 focused Drive-sync tests, `cargo check -p cockpit-cli`, CLI help, and read-only status against isolated nonexistent test paths.
+- Pushed implementation commits `068a84a`, `97142af`, and `8bbd5c0` to `fork/codex/google-drive-sync`.
 
 ## In-progress work
 
-- Visual C++ Build Tools are being installed because the existing Build Tools instance lacked the MSVC linker.
-- Rust formatting parses successfully and `cargo metadata` succeeds. Full compile/test validation is waiting for the linker installation to finish.
+- GitHub Actions run `30035109511` is validating commit `8bbd5c0` on `windows-latest` and `macos-latest`.
+- Real Google Drive session synchronization remains intentionally disabled until CI is green and the first-device upload-only rollout is explicitly started.
 
 ## Next steps
 
-1. Run `cargo test -p cockpit-core codex_drive_sync --no-fail-fast`.
-2. Run `cargo check -p cockpit-cli` and validate CLI help/status behavior.
-3. Fix all compiler, Clippy, and test failures; run focused failure-injection tests again.
-4. Review the diff for secrets, unsafe path handling, accidental live database access, and unrelated changes.
-5. Commit and push `codex/google-drive-sync` to the user fork.
-6. Let Windows/macOS CI complete before enabling real bidirectional imports.
-7. Deploy on the first computer with `--upload-only --dry-run`, then `--upload-only`; configure the second device only after verifying encrypted object/head counts.
+1. Wait for GitHub Actions run `30035109511` and fix any Windows/macOS failure before deployment.
+2. Create a pull request from `codex/google-drive-sync` to the fork's `main` only after CI is green and the user wants integration.
+3. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
+4. Review counts and paths, then run `--upload-only`; do not enable imports yet.
+5. Validate File Provider hydration and app-server discovery on a physical Mac before the first macOS import.
+6. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
 
 ## Risks or blockers
 
@@ -52,3 +55,4 @@ Implement a safe Windows/macOS Cockpit CLI MVP that synchronizes encrypted Codex
 - Automatic divergent branch merging is intentionally unsupported. A selected conflict object can overwrite only through the explicit resolve command after backup.
 - macOS behavior still requires hosted/physical Mac validation, especially File Provider hydration, permissions, app-server discovery, and atomic rename behavior.
 - Cockpit Tools is CC BY-NC-SA 4.0; commercial/internal business use requires separate authorization.
+- Workspace-wide Clippy with `-D warnings` is blocked by more than 180 pre-existing upstream warnings. The new Drive-sync files have no Clippy warnings; two remaining warnings in `cockpit-cli/src/main.rs` are pre-existing lines last changed by upstream commit `1e2b1a9`.
