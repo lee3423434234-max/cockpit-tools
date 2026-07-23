@@ -7,7 +7,7 @@ use aes_gcm::aead::{Aead, KeyInit, Payload};
 use aes_gcm::{Aes256Gcm, Nonce};
 use chrono::Utc;
 use pbkdf2::pbkdf2_hmac;
-use rand::{rngs::OsRng, RngCore};
+use rand::{rngs::OsRng, Rng};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Map as JsonMap, Value as JsonValue};
 use sha2::{Digest, Sha256};
@@ -966,10 +966,8 @@ fn encode_snapshot(snapshot: &SessionSnapshot, passphrase: &str) -> Result<Vec<u
     plaintext.extend_from_slice(&manifest);
     plaintext.extend_from_slice(&snapshot.rollout);
 
-    let mut salt = [0u8; SALT_LEN];
-    let mut nonce_bytes = [0u8; NONCE_LEN];
-    OsRng.fill_bytes(&mut salt);
-    OsRng.fill_bytes(&mut nonce_bytes);
+    let salt: [u8; SALT_LEN] = OsRng.gen();
+    let nonce_bytes: [u8; NONCE_LEN] = OsRng.gen();
     let key = derive_key(passphrase, &salt);
     let cipher = Aes256Gcm::new_from_slice(&key)
         .map_err(|_| "failed to initialize AES-256-GCM".to_string())?;
