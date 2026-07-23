@@ -46,11 +46,11 @@ Deliver a safe Cockpit GUI and CLI that synchronize encrypted Codex rollout sess
 
 ## In-progress work
 
-- The GUI implementation is complete locally on `codex/google-drive-sync-gui`; final diff review, commit, push, and a separate pull request remain. Real Google Drive writes remain intentionally disabled.
+- The GUI implementation is committed as `8a5a34e` and pushed to `fork/codex/google-drive-sync-gui`. A separate pull request still needs to be created; real Google Drive writes remain intentionally disabled.
 
 ## Next steps
 
-1. Commit and push `codex/google-drive-sync-gui`, then open a separate pull request into the fork's `main`; do not merge without explicit approval.
+1. Open a separate pull request from `codex/google-drive-sync-gui` into the fork's `main`; do not merge without explicit approval. Creation URL: `https://github.com/lee3423434234-max/cockpit-tools/compare/main...codex/google-drive-sync-gui?expand=1`.
 2. Run Windows and macOS Apple Silicon hosted CI for the GUI pull request.
 3. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available; this session exposed the Browser plugin but no usable browser backend.
 4. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
