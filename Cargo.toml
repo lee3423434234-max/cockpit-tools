@@ -46,5 +46,5 @@ sha1 = "0.10"
 tiny_http = "0.12"
 rsa = "0.9"
 serde_urlencoded = "0.7"
-windows = { version = "0.58", features = ["Win32_Foundation", "Win32_Security_Cryptography"] }
+windows = { version = "0.58", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_Storage_FileSystem"] }
 junction = "2.0"

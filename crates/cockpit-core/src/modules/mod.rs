@@ -10,6 +10,8 @@ pub mod codebuddy_cn_oauth;
 pub mod codebuddy_instance;
 pub mod codebuddy_oauth;
 pub mod codex_account;
+pub mod codex_app_server;
+pub mod codex_drive_sync;
 pub mod codex_instance;
 pub mod codex_oauth;
 pub mod codex_quota;

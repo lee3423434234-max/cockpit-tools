@@ -1,0 +1,50 @@
+name: Codex Drive sync CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "crates/cockpit-core/**"
+      - "crates/cockpit-cli/**"
+      - ".github/workflows/codex-drive-sync-ci.yml"
+  push:
+    branches:
+      - main
+      - "codex/**"
+    paths:
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "crates/cockpit-core/**"
+      - "crates/cockpit-cli/**"
+      - ".github/workflows/codex-drive-sync-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Select stable Rust
+        shell: bash
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+
+      - name: Test Drive synchronization core
+        run: cargo test -p cockpit-core codex_drive_sync --no-fail-fast
+
+      - name: Check CLI integration
+        run: cargo check -p cockpit-cli

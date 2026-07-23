@@ -2,13 +2,14 @@ cask "cockpit-tools" do
   version "1.3.14"
   sha256 "9d5d35d6a5dba1c809cd88a99034cf9e55abe8a7f8f1a64d84c938289ab72698"
 
-  url "https://github.com/jlcodes99/cockpit-tools/releases/download/v#{version}/Cockpit.Tools_#{version}_universal.dmg",
-      verified: "github.com/jlcodes99/cockpit-tools/"
+  url "https://github.com/lee3423434234-max/cockpit-tools/releases/download/v#{version}/Cockpit.Tools_#{version}_aarch64.dmg",
+      verified: "github.com/lee3423434234-max/cockpit-tools/"
   name "Cockpit Tools"
   desc "Account manager for AI IDEs (Antigravity and Codex)"
   homepage "https://github.com/jlcodes99/cockpit-tools"
 
   auto_updates true
+  depends_on arch: :arm64
 
   postflight do
     system_command "/usr/bin/xattr",
