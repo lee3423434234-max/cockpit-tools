@@ -2,7 +2,7 @@
 
 ## Current goal
 
-Implement a safe Cockpit CLI MVP that synchronizes encrypted Codex rollout sessions through a Google Drive for desktop directory, and ship the fork only for Windows x64 and macOS Apple Silicon (ARM64), without synchronizing authentication, configuration, logs, or live databases.
+Deliver a safe Cockpit GUI and CLI that synchronize encrypted Codex rollout sessions through a Google Drive for desktop directory, shipping only for Windows x64 and macOS Apple Silicon (ARM64), without synchronizing authentication, configuration, logs, or live databases.
 
 ## Completed work
 
@@ -40,17 +40,21 @@ Implement a safe Cockpit CLI MVP that synchronizes encrypted Codex rollout sessi
 - Pushed architecture-policy commit `e199061`; the updated pull request passed all 8 checks, including the reduced `windows-x86_64` and `macos-aarch64` Build Matrix jobs.
 - Merged pull request `#1` into the fork's `main` with merge commit `48b80898172547a004a259f6028ac12c86d3fec5`.
 - Verified the fork's `main` contains the encrypted Drive sync feature, the two-architecture Build Matrix, and the scheduled/manual `.github/workflows/sync-upstream.yml` workflow.
+- Implemented branch `codex/google-drive-sync-gui` with a lazy-loaded Settings → Data GUI, memory-only passphrase handling, Drive folder selection, CWD/provider mapping, read-only status, upload-only and bidirectional dry-runs/runs, conflict listing, and explicit conflict resolution.
+- Added four Tauri commands backed directly by `cockpit-core` and moved blocking scans/sync work off the UI thread.
+- Verified TypeScript typecheck, locale key consistency, production Vite build, two focused GUI bridge tests, and `cargo check -p cockpit-tools` on Windows x64. No real Drive sync or conflict resolution was executed.
 
 ## In-progress work
 
-- Pull request `#1` is merged and the fork integration is complete. Real Google Drive synchronization remains intentionally disabled until the first-device upload-only rollout is explicitly started.
+- The GUI implementation is complete locally on `codex/google-drive-sync-gui`; final diff review, commit, push, and a separate pull request remain. Real Google Drive writes remain intentionally disabled.
 
 ## Next steps
 
-1. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
-2. Review counts and paths, then run `--upload-only`; do not enable imports yet.
-3. Validate File Provider hydration and app-server discovery on a physical Apple Silicon Mac before the first macOS import.
-4. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
+1. Commit and push `codex/google-drive-sync-gui`, then open a separate pull request into the fork's `main`; do not merge without explicit approval.
+2. Run Windows and macOS Apple Silicon hosted CI for the GUI pull request.
+3. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available; this session exposed the Browser plugin but no usable browser backend.
+4. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
+5. Keep the first real deployment upload-only until encrypted objects and heads are inspected.
 
 ## Risks or blockers
 
@@ -64,3 +68,4 @@ Implement a safe Cockpit CLI MVP that synchronizes encrypted Codex rollout sessi
 - The fork intentionally does not publish Windows ARM, macOS Intel/universal, or Linux artifacts. Upstream changes to shared release workflows can conflict with this fork-only architecture policy during automatic upstream merges.
 - Cockpit Tools is CC BY-NC-SA 4.0; commercial/internal business use requires separate authorization.
 - Workspace-wide Clippy with `-D warnings` is blocked by more than 180 pre-existing upstream warnings. The new Drive-sync files have no Clippy warnings; two remaining warnings in `cockpit-cli/src/main.rs` are pre-existing lines last changed by upstream commit `1e2b1a9`.
+- Rendered GUI interaction and responsive screenshots remain unverified because the in-app Browser runtime returned no available browser backend; build and source-level checks passed.
