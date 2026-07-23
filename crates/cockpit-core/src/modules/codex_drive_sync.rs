@@ -1387,7 +1387,10 @@ fn trim_cr(value: &[u8]) -> &[u8] {
     value.strip_suffix(b"\r").unwrap_or(value)
 }
 
-fn io_error(action: &'static str, path: &Path) -> impl FnOnce(std::io::Error) -> String + '_ {
+fn io_error<'a>(
+    action: &'static str,
+    path: &'a Path,
+) -> impl FnOnce(std::io::Error) -> String + 'a {
     move |error| format!("{action} {}: {error}", path.display())
 }
 

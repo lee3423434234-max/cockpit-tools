@@ -201,12 +201,15 @@ async fn run_codex_command(command: CodexCommands) -> anyhow::Result<()> {
     match command {
         CodexCommands::Sessions { command } => match command {
             SessionCommands::Status(args) => {
-                let engine = SyncEngine::new(build_sync_config(&args, false)?)?;
-                println!("{}", serde_json::to_string_pretty(&engine.status()?)?);
+                let engine = SyncEngine::new(build_sync_config(&args, false)?)
+                    .map_err(anyhow::Error::msg)?;
+                let status = engine.status().map_err(anyhow::Error::msg)?;
+                println!("{}", serde_json::to_string_pretty(&status)?);
             }
             SessionCommands::SyncOnce(args) => {
-                let engine = SyncEngine::new(build_sync_config(&args, true)?)?;
-                let summary = engine.sync_once()?;
+                let engine =
+                    SyncEngine::new(build_sync_config(&args, true)?).map_err(anyhow::Error::msg)?;
+                let summary = engine.sync_once().map_err(anyhow::Error::msg)?;
                 println!("{}", serde_json::to_string_pretty(&summary)?);
                 if summary.index_rebuild_pending {
                     anyhow::bail!(
@@ -218,7 +221,8 @@ async fn run_codex_command(command: CodexCommands) -> anyhow::Result<()> {
                 sync,
                 interval_seconds,
             } => {
-                let engine = SyncEngine::new(build_sync_config(&sync, true)?)?;
+                let engine =
+                    SyncEngine::new(build_sync_config(&sync, true)?).map_err(anyhow::Error::msg)?;
                 println!(
                     "{}",
                     format!(
@@ -246,8 +250,11 @@ async fn run_codex_command(command: CodexCommands) -> anyhow::Result<()> {
                 }
             }
             SessionCommands::ResolveConflict { sync, object_sha } => {
-                let engine = SyncEngine::new(build_sync_config(&sync, true)?)?;
-                let summary = engine.resolve_conflict(&object_sha)?;
+                let engine =
+                    SyncEngine::new(build_sync_config(&sync, true)?).map_err(anyhow::Error::msg)?;
+                let summary = engine
+                    .resolve_conflict(&object_sha)
+                    .map_err(anyhow::Error::msg)?;
                 println!("{}", serde_json::to_string_pretty(&summary)?);
             }
         },
