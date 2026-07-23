@@ -1,0 +1,86 @@
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-upstream-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge jlcodes99/cockpit-tools safely
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          API_URL: ${{ github.api_url }}
+        run: |
+          set -euo pipefail
+
+          git clone --filter=blob:none "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" repo
+          cd repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/jlcodes99/cockpit-tools.git
+          git fetch upstream main --tags
+          git checkout main
+
+          if git merge-base --is-ancestor upstream/main HEAD; then
+            echo "Fork already contains the latest upstream main."
+            exit 0
+          fi
+
+          if git merge --no-edit upstream/main; then
+            git push origin HEAD:main
+            echo "Merged and pushed upstream/main to the fork."
+            exit 0
+          fi
+
+          git merge --abort
+          git fetch origin upstream-sync:refs/remotes/origin/upstream-sync || true
+          git branch -f upstream-sync upstream/main
+          git push origin upstream-sync --force-with-lease
+
+          owner="${REPOSITORY%%/*}"
+          existing_url="$(
+            curl -fsSL \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "${API_URL}/repos/${REPOSITORY}/pulls?state=open&head=${owner}%3Aupstream-sync&base=main" \
+              | jq -r '.[0].html_url // empty'
+          )"
+
+          if [ -z "${existing_url}" ]; then
+            payload="$(
+              jq -nc \
+                --arg title "Resolve upstream sync conflict" \
+                --arg head "upstream-sync" \
+                --arg base "main" \
+                --arg body "Automatic synchronization with jlcodes99/cockpit-tools could not merge cleanly. Resolve this PR manually; do not force-push the modified main branch." \
+                '{title:$title, head:$head, base:$base, body:$body}'
+            )"
+            existing_url="$(
+              curl -fsSL -X POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer ${GH_TOKEN}" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "${API_URL}/repos/${REPOSITORY}/pulls" \
+                -d "${payload}" \
+                | jq -r '.html_url'
+            )"
+          fi
+
+          echo "Upstream conflict requires manual resolution: ${existing_url}"
+          echo "### Upstream conflict" >> "${GITHUB_STEP_SUMMARY}"
+          echo "Resolve: ${existing_url}" >> "${GITHUB_STEP_SUMMARY}"
+          exit 1
