@@ -306,7 +306,7 @@ impl SyncEngine {
             match choose_remote(local, &snapshots) {
                 ReconcileDecision::NoOp => summary.no_op_sessions += 1,
                 ReconcileDecision::Apply(snapshot, is_fast_forward) => {
-                    apply.push((snapshot, local.cloned(), is_fast_forward));
+                    apply.push((*snapshot, local.cloned(), is_fast_forward));
                 }
                 ReconcileDecision::Conflict(remote_hashes) => {
                     summary.conflicts += 1;
@@ -749,7 +749,7 @@ impl SyncEngine {
 #[derive(Debug)]
 enum ReconcileDecision {
     NoOp,
-    Apply(SessionSnapshot, bool),
+    Apply(Box<SessionSnapshot>, bool),
     Conflict(Vec<String>),
 }
 
@@ -776,7 +776,7 @@ fn choose_remote(local: Option<&LocalSession>, snapshots: &[SessionSnapshot]) ->
         return ReconcileDecision::Conflict(hashes);
     }
     let Some(local) = local else {
-        return ReconcileDecision::Apply(longest, false);
+        return ReconcileDecision::Apply(Box::new(longest), false);
     };
     if local.snapshot.canonical == longest.canonical
         || local.snapshot.canonical.starts_with(&longest.canonical)
@@ -784,7 +784,7 @@ fn choose_remote(local: Option<&LocalSession>, snapshots: &[SessionSnapshot]) ->
         return ReconcileDecision::NoOp;
     }
     if longest.canonical.starts_with(&local.snapshot.canonical) {
-        return ReconcileDecision::Apply(longest, true);
+        return ReconcileDecision::Apply(Box::new(longest), true);
     }
     ReconcileDecision::Conflict(hashes)
 }

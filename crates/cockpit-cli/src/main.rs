@@ -21,7 +21,7 @@ enum Commands {
     /// Codex session and account operations
     Codex {
         #[command(subcommand)]
-        command: CodexCommands,
+        command: Box<CodexCommands>,
     },
     /// List accounts for a platform
     List {
@@ -133,7 +133,7 @@ async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Some(Commands::Codex { command }) => run_codex_command(command).await?,
+        Some(Commands::Codex { command }) => run_codex_command(*command).await?,
         Some(Commands::List { platform }) => match platform.to_lowercase().as_str() {
             "cursor" => {
                 let accounts = cursor_account::list_accounts();
