@@ -37,20 +37,20 @@ Implement a safe Cockpit CLI MVP that synchronizes encrypted Codex rollout sessi
 - Restricted the fork's pull-request Build Matrix and release artifacts to Windows x64 (`x86_64-pc-windows-msvc`) and macOS Apple Silicon (`aarch64-apple-darwin`).
 - Updated the updater manifest, Homebrew cask, manual release helper, and release documentation for the two supported architectures; macOS Intel/universal and Linux release jobs were removed.
 - Added a release-manifest regression test and locally passed 14 Node release tests, YAML parsing, 11 Drive-sync tests, 2 app-server path tests, and `cargo check -p cockpit-cli`.
+- Pushed architecture-policy commit `e199061`; the updated pull request passed all 8 checks, including the reduced `windows-x86_64` and `macos-aarch64` Build Matrix jobs.
+- Merged pull request `#1` into the fork's `main` with merge commit `48b80898172547a004a259f6028ac12c86d3fec5`.
+- Verified the fork's `main` contains the encrypted Drive sync feature, the two-architecture Build Matrix, and the scheduled/manual `.github/workflows/sync-upstream.yml` workflow.
 
 ## In-progress work
 
-- Pull request `#1` remains open and unmerged. The two-architecture update is locally validated and must be pushed, then the reduced Windows x64/macOS ARM64 checks must pass before merge. Real Google Drive synchronization remains intentionally disabled.
+- Pull request `#1` is merged and the fork integration is complete. Real Google Drive synchronization remains intentionally disabled until the first-device upload-only rollout is explicitly started.
 
 ## Next steps
 
-1. Push the Windows x64/macOS ARM64 update to `codex/google-drive-sync` and wait for the updated pull-request checks.
-2. Merge pull request `#1` into the fork's `main` only after all required checks pass.
-3. Mirror this handoff state into the project and Google Drive copies after merge.
-4. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
-5. Review counts and paths, then run `--upload-only`; do not enable imports yet.
-6. Validate File Provider hydration and app-server discovery on a physical Apple Silicon Mac before the first macOS import.
-7. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
+1. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
+2. Review counts and paths, then run `--upload-only`; do not enable imports yet.
+3. Validate File Provider hydration and app-server discovery on a physical Apple Silicon Mac before the first macOS import.
+4. Configure the second device with explicit `--map-cwd` values, dry-run first, and enable bidirectional imports only after backup verification.
 
 ## Risks or blockers
 
