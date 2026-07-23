@@ -2655,7 +2655,7 @@ Start-Process -FilePath $target -ErrorAction Stop | Out-Null"#
     Ok(())
 }
 
-fn detect_codex_exec_path() -> Option<std::path::PathBuf> {
+pub(crate) fn detect_codex_exec_path() -> Option<std::path::PathBuf> {
     #[cfg(target_os = "macos")]
     {
         if let Some(path) = find_codex_process_exe() {
