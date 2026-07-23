@@ -31,14 +31,15 @@ Implement a safe Windows/macOS Cockpit CLI MVP that synchronizes encrypted Codex
 - Verified 11 focused Drive-sync tests, `cargo check -p cockpit-cli`, CLI help, and read-only status against isolated nonexistent test paths.
 - Pushed implementation commits `068a84a`, `97142af`, and `8bbd5c0` to `fork/codex/google-drive-sync`.
 - GitHub Actions run `30035109511` passed on both `windows-latest` and `macos-latest` for code commit `8bbd5c0`.
+- Opened fork pull request `#1` from `codex/google-drive-sync` into `main`: `https://github.com/lee3423434234-max/cockpit-tools/pull/1`.
 
 ## In-progress work
 
-- Implementation and cross-platform CI are complete. Real Google Drive session synchronization remains intentionally disabled until the first-device upload-only rollout is explicitly started.
+- Implementation and cross-platform CI are complete. Pull request `#1` is open and unmerged. Real Google Drive session synchronization remains intentionally disabled until the first-device upload-only rollout is explicitly started.
 
 ## Next steps
 
-1. Create a pull request from `codex/google-drive-sync` to the fork's `main` only when the user wants integration.
+1. Review and merge pull request `#1` into the fork's `main` when integration is desired.
 2. On the first computer, close Codex and run `--upload-only --dry-run` against a private Drive directory with the passphrase supplied out-of-band.
 3. Review counts and paths, then run `--upload-only`; do not enable imports yet.
 4. Validate File Provider hydration and app-server discovery on a physical Mac before the first macOS import.
