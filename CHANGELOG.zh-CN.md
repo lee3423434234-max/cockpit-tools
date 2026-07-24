@@ -12,6 +12,7 @@
 ### 新增
 
 - **支持将 Web Session 自动注册为 Agent Identity**：确认导入后会自动加入 Codex API 服务账号池，并支持跨设备导出与导入；此类账号仅限 API 服务使用，不支持普通切号、客户端或 CLI 启动及 OAuth 绑定。
+- **支持 Codex rollout session 的加密 Google Drive 同步**：Windows x64 与 macOS Apple Silicon 用户可通过 Google Drive 桌面同步文件夹同步 session rollout，不会复制认证资料、配置、日志或 SQLite 数据库。设置 → 数据页提供配置、状态、仅上传/双向同步、预演及明确的冲突处理；密码仅保留在内存中。
 
 ### 修复
 
