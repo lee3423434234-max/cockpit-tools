@@ -1,6 +1,6 @@
 cask "cockpit-tools" do
   version "1.3.14"
-  sha256 "9d5d35d6a5dba1c809cd88a99034cf9e55abe8a7f8f1a64d84c938289ab72698"
+  sha256 "0e20929caf1a3b8de48ee64ff6d9b1c820a489bb8dc5b496f6b04797366760fd"
 
   url "https://github.com/lee3423434234-max/cockpit-tools/releases/download/v#{version}/Cockpit.Tools_#{version}_aarch64.dmg",
       verified: "github.com/lee3423434234-max/cockpit-tools/"
