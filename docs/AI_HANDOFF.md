@@ -47,13 +47,18 @@ Deliver a safe Cockpit GUI and CLI that synchronize encrypted Codex rollout sess
 
 ## In-progress work
 
-- The GUI is merged into the fork's `main`. Rendered desktop/mobile GUI QA and physical Apple Silicon validation remain; real Google Drive writes remain intentionally disabled.
+- Preparing the fork's first formal `v1.3.14` GitHub Release. The release workflow now needs a safe first-release bootstrap path because this fork has no earlier `latest.json` to preserve during parallel platform builds.
+- The updater endpoints and release-note fallback URLs now target `lee3423434234-max/cockpit-tools`, rather than the upstream release page.
+- Generated a dedicated encrypted Tauri updater signing key pair for the fork. The private key and DPAPI-protected password recovery copy are stored outside Git under `C:\Users\Tom\.cockpit-tools-signing`; the public key is configured in `src-tauri/tauri.conf.json`. Secret values must never be copied into this handoff.
+- Added `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` as fork repository secrets, verified both names in GitHub, and deleted the temporary plaintext password file.
 
 ## Next steps
 
-1. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available; this session exposed the Browser plugin but no usable browser backend.
-2. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
-3. Keep the first real deployment upload-only until encrypted objects and heads are inspected.
+1. Review, merge, and run the first-release bootstrap workflow change.
+2. Create and push the `v1.3.14` tag on the merged release commit; verify Windows x64 and macOS Apple Silicon assets, updater manifests, and checksums on the public Release page.
+3. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available; this session exposed the Browser plugin but no usable browser backend.
+4. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
+5. Keep the first real deployment upload-only until encrypted objects and heads are inspected.
 
 ## Risks or blockers
 
@@ -68,3 +73,4 @@ Deliver a safe Cockpit GUI and CLI that synchronize encrypted Codex rollout sess
 - Cockpit Tools is CC BY-NC-SA 4.0; commercial/internal business use requires separate authorization.
 - Workspace-wide Clippy with `-D warnings` is blocked by more than 180 pre-existing upstream warnings. The new Drive-sync files have no Clippy warnings; two remaining warnings in `cockpit-cli/src/main.rs` are pre-existing lines last changed by upstream commit `1e2b1a9`.
 - Rendered GUI interaction and responsive screenshots remain unverified because the in-app Browser runtime returned no available browser backend; build and source-level checks passed.
+- The updater signing key backup is tied to the current Windows account through DPAPI. Preserve the encrypted private key and password recovery file together and migrate them deliberately before replacing this machine or account.

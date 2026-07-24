@@ -107,7 +107,7 @@ jobs:
 
           date -u +"%Y-%m-%dT%H:%M:%SZ" > published-at.txt
 
-      - name: Preserve previous legacy latest.json
+      - name: Preserve previous legacy latest.json or bootstrap first fork release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -119,24 +119,40 @@ jobs:
               --json tagName,isDraft,isPrerelease \
               --jq "[.[] | select(.isDraft == false and .isPrerelease == false and .tagName != \"${GITHUB_REF_NAME}\")][0].tagName // \"\""
           )"
-          if [ -z "${PREVIOUS_TAG}" ]; then
-            echo "No previous published release was found; refusing to stage without a legacy updater manifest."
-            exit 1
+          if [ -n "${PREVIOUS_TAG}" ]; then
+            mkdir -p previous-release
+            gh release download "${PREVIOUS_TAG}" \
+              --pattern "latest.json" \
+              --dir previous-release \
+              --clobber
+            test -s previous-release/latest.json
+            cp previous-release/latest.json legacy-latest.json
+            echo "Preserved legacy latest.json from ${PREVIOUS_TAG}"
+          else
+            # A fork has no previously published updater manifest. Publish a
+            # deliberately older, platform-empty manifest while the two
+            # platform jobs build. It cannot advertise an unusable update, and
+            # finalize-legacy-latest replaces it with the complete manifest.
+            cat > legacy-latest.json <<'JSON'
+          {
+            "version": "0.0.0",
+            "notes": "Initial fork release is being prepared.",
+            "pub_date": "1970-01-01T00:00:00Z",
+            "platforms": {}
+          }
+          JSON
+            jq -e '
+              .version == "0.0.0" and
+              (.platforms | type == "object" and length == 0)
+            ' legacy-latest.json > /dev/null
+            echo "Created safe bootstrap legacy latest.json for the first fork release"
           fi
 
-          mkdir -p previous-release
-          gh release download "${PREVIOUS_TAG}" \
-            --pattern "latest.json" \
-            --dir previous-release \
-            --clobber
-          test -s previous-release/latest.json
-          cp previous-release/latest.json legacy-latest.json
-          echo "Preserved legacy latest.json from ${PREVIOUS_TAG}"
-
-      # Publish the release early (with previous complete latest.json) so parallel
-      # platform jobs can verify assets via public tag download URLs without
-      # waiting for Windows, and without reading the previous release's
-      # same-named target manifests through /releases/latest/.
+      # Publish the release early (with a previous complete manifest, or the
+      # first-release bootstrap) so parallel platform jobs can verify assets via
+      # public tag download URLs without waiting for Windows, and without
+      # reading the previous release's same-named target manifests through
+      # /releases/latest/.
       - name: Create or update staged release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
