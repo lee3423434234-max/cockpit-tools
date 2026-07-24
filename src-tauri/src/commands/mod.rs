@@ -9,6 +9,7 @@ pub mod codebuddy_cn_instance;
 pub mod codebuddy_instance;
 pub mod codebuddy_session;
 pub mod codex;
+pub mod codex_drive_sync;
 pub mod codex_instance;
 pub mod cursor;
 pub mod cursor_instance;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { Suspense, lazy, useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -92,6 +92,12 @@ import {
   Github, User, Rocket, Save, FolderOpen,
   AlertCircle, RefreshCw, Heart, MessageSquare, FileText, Download, X
 } from 'lucide-react';
+
+const SettingsCodexDriveSyncSection = lazy(() =>
+  import('../components/SettingsCodexDriveSyncSection').then((module) => ({
+    default: module.SettingsCodexDriveSyncSection,
+  })),
+);
 
 
 
@@ -7197,6 +7203,18 @@ export function SettingsPage() {
         {activeTab === 'data' && (
           <>
             <SettingsAccountTransferSection />
+            <Suspense
+              fallback={(
+                <div className="settings-group settings-codex-drive-sync-loading">
+                  <div className="settings-row settings-row--no-border">
+                    <RefreshCw size={16} className="loading-spinner" />
+                    {t('common.loading', '載入中…')}
+                  </div>
+                </div>
+              )}
+            >
+              <SettingsCodexDriveSyncSection />
+            </Suspense>
             <SettingsWebdavSyncSection />
           </>
         )}
