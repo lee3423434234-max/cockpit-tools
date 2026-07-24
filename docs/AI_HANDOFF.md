@@ -44,21 +44,21 @@ Deliver a safe Cockpit GUI and CLI that synchronize encrypted Codex rollout sess
 - Added four Tauri commands backed directly by `cockpit-core` and moved blocking scans/sync work off the UI thread.
 - Verified TypeScript typecheck, locale key consistency, production Vite build, two focused GUI bridge tests, and `cargo check -p cockpit-tools` on Windows x64. No real Drive sync or conflict resolution was executed.
 - Pull request `#2` passed all 8 checks and merged into the fork's `main` as `6e2a9e7a482e39f5e021b5305a1555c55610e317`.
+- Added a safe first-release bootstrap manifest, redirected updater/release-note URLs to the fork, generated a fork-specific Tauri updater key pair, configured its public key, stored the encrypted private key/password as repository secrets, and removed the temporary plaintext password.
+- Pull request `#3` passed all 6 applicable checks (Windows x64, macOS ARM64, Preflight, Rust/JavaScript CodeQL, and code scanning) and merged into `main` as `a87e819318ea1655b81508b850bf104ad17ce364`.
+- Published formal GitHub Release `v1.3.14`: `https://github.com/lee3423434234-max/cockpit-tools/releases/tag/v1.3.14`.
+- Release workflow run `30107660341` succeeded on attempt 2 after the generated Homebrew Cask update was applied directly to `main` as `72f4f40`; repository-wide permission for Actions-created pull requests remained disabled.
+- Verified 12 public release assets, HTTP 200 downloads for Windows EXE/MSI and macOS ARM64 DMG, signed updater archives, target manifests, the complete five-target legacy `latest.json`, and `SHA256SUMS.txt`.
 
 ## In-progress work
 
-- Preparing the fork's first formal `v1.3.14` GitHub Release. The release workflow now needs a safe first-release bootstrap path because this fork has no earlier `latest.json` to preserve during parallel platform builds.
-- The updater endpoints and release-note fallback URLs now target `lee3423434234-max/cockpit-tools`, rather than the upstream release page.
-- Generated a dedicated encrypted Tauri updater signing key pair for the fork. The private key and DPAPI-protected password recovery copy are stored outside Git under `C:\Users\Tom\.cockpit-tools-signing`; the public key is configured in `src-tauri/tauri.conf.json`. Secret values must never be copied into this handoff.
-- Added `TAURI_SIGNING_PRIVATE_KEY` and `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` as fork repository secrets, verified both names in GitHub, and deleted the temporary plaintext password file.
+- The formal `v1.3.14` release is complete. Rendered GUI QA, physical Apple Silicon validation, and the first real Google Drive upload/import remain pending.
 
 ## Next steps
 
-1. Review, merge, and run the first-release bootstrap workflow change.
-2. Create and push the `v1.3.14` tag on the merged release commit; verify Windows x64 and macOS Apple Silicon assets, updater manifests, and checksums on the public Release page.
-3. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available; this session exposed the Browser plugin but no usable browser backend.
-4. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
-5. Keep the first real deployment upload-only until encrypted objects and heads are inspected.
+1. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available.
+2. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
+3. Keep the first real deployment upload-only until encrypted objects and heads are inspected.
 
 ## Risks or blockers
 
