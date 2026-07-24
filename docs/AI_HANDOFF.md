@@ -43,18 +43,17 @@ Deliver a safe Cockpit GUI and CLI that synchronize encrypted Codex rollout sess
 - Implemented branch `codex/google-drive-sync-gui` with a lazy-loaded Settings → Data GUI, memory-only passphrase handling, Drive folder selection, CWD/provider mapping, read-only status, upload-only and bidirectional dry-runs/runs, conflict listing, and explicit conflict resolution.
 - Added four Tauri commands backed directly by `cockpit-core` and moved blocking scans/sync work off the UI thread.
 - Verified TypeScript typecheck, locale key consistency, production Vite build, two focused GUI bridge tests, and `cargo check -p cockpit-tools` on Windows x64. No real Drive sync or conflict resolution was executed.
+- Pull request `#2` passed all 8 checks and merged into the fork's `main` as `6e2a9e7a482e39f5e021b5305a1555c55610e317`.
 
 ## In-progress work
 
-- The GUI implementation is committed as `8a5a34e` and pushed to `fork/codex/google-drive-sync-gui`. A separate pull request still needs to be created; real Google Drive writes remain intentionally disabled.
+- The GUI is merged into the fork's `main`. Rendered desktop/mobile GUI QA and physical Apple Silicon validation remain; real Google Drive writes remain intentionally disabled.
 
 ## Next steps
 
-1. Open a separate pull request from `codex/google-drive-sync-gui` into the fork's `main`; do not merge without explicit approval. Creation URL: `https://github.com/lee3423434234-max/cockpit-tools/compare/main...codex/google-drive-sync-gui?expand=1`.
-2. Run Windows and macOS Apple Silicon hosted CI for the GUI pull request.
-3. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available; this session exposed the Browser plugin but no usable browser backend.
-4. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
-5. Keep the first real deployment upload-only until encrypted objects and heads are inspected.
+1. Perform rendered desktop/mobile GUI QA when an in-app Browser backend is available; this session exposed the Browser plugin but no usable browser backend.
+2. Validate Google Drive File Provider hydration and the full GUI flow on a physical Apple Silicon Mac before any macOS import.
+3. Keep the first real deployment upload-only until encrypted objects and heads are inspected.
 
 ## Risks or blockers
 
