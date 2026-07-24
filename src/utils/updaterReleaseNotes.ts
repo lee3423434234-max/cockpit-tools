@@ -1,7 +1,7 @@
 const ZH_SECTION_HEADER = '## 更新日志（中文）';
 const EN_SECTION_HEADER = '## Changelog (English)';
 const GITHUB_RELEASE_TAG_BASE_URL =
-  'https://github.com/jlcodes99/cockpit-tools/releases/tag/v';
+  'https://github.com/lee3423434234-max/cockpit-tools/releases/tag/v';
 const RELEASE_HIGHLIGHTS: Record<string, { zh: string; en: string }> = {
   '1.3.1': {
     zh: `### 重要更新
@@ -134,7 +134,7 @@ export function resolveUpdaterDownloadUrl(
 
   const safeVersion = version.trim();
   if (!safeVersion) {
-    return 'https://github.com/jlcodes99/cockpit-tools/releases/latest';
+    return 'https://github.com/lee3423434234-max/cockpit-tools/releases/latest';
   }
   return `${GITHUB_RELEASE_TAG_BASE_URL}${encodeURIComponent(safeVersion)}`;
 }

@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - **Web Sessions can be registered automatically as Agent Identity accounts**: confirmed imports are added to the Codex API Service account pool automatically and can be exported and imported across devices; these accounts are limited to API Service use and do not support normal account switching, client or CLI launch, or OAuth binding.
-- **Encrypted Google Drive sync for Codex rollout sessions**: Windows x64 and macOS Apple Silicon users can synchronize session rollouts through a Google Drive desktop folder without copying authentication, configuration, logs, or SQLite databases. Settings → Data includes setup, status, upload-only and bidirectional sync, previews, and explicit conflict resolution; the passphrase stays in memory only.
+- **Encrypted Google Drive sync for Codex rollout sessions**: Windows x64 and macOS Apple Silicon users can synchronize session rollouts through a Google Drive desktop folder without copying authentication, configuration, logs, or SQLite databases. Settings → Data includes setup, status, upload-only and bidirectional sync, previews, and explicit conflict resolution; the passphrase stays in memory only. The app's updater and release-note links target this fork's releases.
 
 ### Fixed
 
